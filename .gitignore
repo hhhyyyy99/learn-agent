@@ -45,3 +45,7 @@ collect.sh
 .graphifyignore
 graphify-out/
 demos/
+
+# 外部工具
+.codex/
+openspec/
