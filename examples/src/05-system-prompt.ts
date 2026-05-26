@@ -1,5 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 const toolGuides: Record<string, string> = {
   read_file: `
@@ -30,31 +30,28 @@ const toolGuides: Record<string, string> = {
 - 先用 ls/pwd 确认目录，再执行危险操作`,
 };
 
-// 项目级配置：类似 CLAUDE.md, AGENTS.md，目前直接去找
 async function loadProjectContext(cwd: string): Promise<string> {
-  const contextFiles = ["AGENTS.md",'CLAUDE.md'];
+  const contextFiles = ["AGENTS.md", "CLAUDE.md"];
   let context = "";
   for (const file of contextFiles) {
     try {
       const content = await fs.readFile(path.join(cwd, file), "utf-8");
       context += `\n项目配置 (${file})\n${content}\n`;
-      break; // 只读第一个找到的
-    } catch {}// 文件不存在，跳过
+      break;
+    } catch {}
   }
   return context;
 }
-// 构建系统提示词
+
 interface BuildPromptOptions {
-  enabledTools: string[]; // 当前启用的工具列表
-  cwd: string; // 当前工作目录
-  customInstructions?: string;// 用户自定义指令
+  enabledTools: string[];
+  cwd: string;
+  customInstructions?: string;
 }
 
-// 注意：buildSystemPrompt 只生成提示词文本。工具的实际定义（JSON Schema）需要单独传给 LLM 的 tools 参数。两者配合使用。
 async function buildSystemPrompt(options: BuildPromptOptions): Promise<string> {
   const { enabledTools, cwd, customInstructions } = options;
 
-  // 基础人格
   let prompt = `你是一个编程助手。你能帮助用户读取、编辑文件，执行命令。
 
 ## 核心原则
@@ -66,35 +63,30 @@ async function buildSystemPrompt(options: BuildPromptOptions): Promise<string> {
 ## 可用工具
 `;
 
-  // 根据启用的工具，添加使用指南
   for (const toolName of enabledTools) {
     if (toolGuides[toolName]) {
       prompt += toolGuides[toolName] + "\n";
     }
   }
 
-  // 加载项目级配置
   const projectContext = await loadProjectContext(cwd);
   if (projectContext) {
     prompt += `\n## 项目上下文\n${projectContext}`;
   }
 
-  // 用户自定义指令
   if (customInstructions) {
     prompt += `\n## 用户指令\n${customInstructions}`;
   }
 
-  // 加上当前日期和目录
   prompt += `\n\n当前日期: ${new Date().toISOString().split("T")[0]}`;
   prompt += `\n工作目录: ${cwd}`;
 
   return prompt;
 }
 
-
 async function main() {
   const prompt = await buildSystemPrompt({
-    enabledTools: ["read_file", "list_files", "edit_file", "run_bash"],
+    enabledTools: ["read_file", "list_files", "edit_file", "run_shell"],
     cwd: process.cwd(),
     customInstructions: "回答时使用中文",
   });

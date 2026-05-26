@@ -1,19 +1,15 @@
 {
-  "name": "learning-agent",
+  "name": "learn-agent",
   "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "task:01": "npx tsx src/01-llm-call.ts",
-    "task:02": "npx tsx src/02-streaming.ts",
-    "task:03": "npx tsx src/03-minimal-agent.ts",
-    "task:04": "npx tsx src/04-tools.ts",
-    "task:05": "npx tsx src/05-system-prompt.ts"
-  },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.97.1",
-    "dotenv": "^16.0.0",
-    "openai": "^4.0.0"
+    "create-package": "tsx scripts/create-package.ts",
+    "task:01": "pnpm --filter learn-agent-examples run task:01",
+    "task:02": "pnpm --filter learn-agent-examples run task:02",
+    "task:03": "pnpm --filter learn-agent-examples run task:03",
+    "task:04": "pnpm --filter learn-agent-examples run task:04",
+    "task:05": "pnpm --filter learn-agent-examples run task:05"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

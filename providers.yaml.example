@@ -1,0 +1,21 @@
+# 默认 provider（不指定时用 openai）
+default: openai
+
+providers:
+  openai:
+    type: openai-compatible
+    apiKey: ${OPENAI_API_KEY}
+    baseURL: ${OPENAI_BASE_URL}
+    defaultModel: gpt-4o
+    models:
+      - id: gpt-4o
+      - id: gpt-4o-mini
+
+  anthropic:
+    type: anthropic
+    apiKey: ${ANTHROPIC_API_KEY}
+    baseURL: ${ANTHROPIC_BASE_URL}
+    defaultModel: claude-sonnet-4-6
+    models:
+      - id: claude-sonnet-4-6
+      - id: claude-opus-4-7
