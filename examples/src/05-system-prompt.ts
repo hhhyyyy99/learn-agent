@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
-import path from "node:path";
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 const toolGuides: Record<string, string> = {
   read_file: `
@@ -28,29 +28,29 @@ const toolGuides: Record<string, string> = {
 - 适合：安装依赖、运行测试、查看 git 状态、编译代码
 - 有 10 秒超时，长任务会失败
 - 先用 ls/pwd 确认目录，再执行危险操作`,
-};
+}
 
 async function loadProjectContext(cwd: string): Promise<string> {
-  const contextFiles = ["AGENTS.md", "CLAUDE.md"];
-  let context = "";
+  const contextFiles = ['AGENTS.md', 'CLAUDE.md']
+  let context = ''
   for (const file of contextFiles) {
     try {
-      const content = await fs.readFile(path.join(cwd, file), "utf-8");
-      context += `\n项目配置 (${file})\n${content}\n`;
-      break;
+      const content = await fs.readFile(path.join(cwd, file), 'utf-8')
+      context += `\n项目配置 (${file})\n${content}\n`
+      break
     } catch {}
   }
-  return context;
+  return context
 }
 
 interface BuildPromptOptions {
-  enabledTools: string[];
-  cwd: string;
-  customInstructions?: string;
+  enabledTools: string[]
+  cwd: string
+  customInstructions?: string
 }
 
 async function buildSystemPrompt(options: BuildPromptOptions): Promise<string> {
-  const { enabledTools, cwd, customInstructions } = options;
+  const { enabledTools, cwd, customInstructions } = options
 
   let prompt = `你是一个编程助手。你能帮助用户读取、编辑文件，执行命令。
 
@@ -61,38 +61,38 @@ async function buildSystemPrompt(options: BuildPromptOptions): Promise<string> {
 - 不确定时先问，不要擅自行动
 
 ## 可用工具
-`;
+`
 
   for (const toolName of enabledTools) {
     if (toolGuides[toolName]) {
-      prompt += toolGuides[toolName] + "\n";
+      prompt += `${toolGuides[toolName]}\n`
     }
   }
 
-  const projectContext = await loadProjectContext(cwd);
+  const projectContext = await loadProjectContext(cwd)
   if (projectContext) {
-    prompt += `\n## 项目上下文\n${projectContext}`;
+    prompt += `\n## 项目上下文\n${projectContext}`
   }
 
   if (customInstructions) {
-    prompt += `\n## 用户指令\n${customInstructions}`;
+    prompt += `\n## 用户指令\n${customInstructions}`
   }
 
-  prompt += `\n\n当前日期: ${new Date().toISOString().split("T")[0]}`;
-  prompt += `\n工作目录: ${cwd}`;
+  prompt += `\n\n当前日期: ${new Date().toISOString().split('T')[0]}`
+  prompt += `\n工作目录: ${cwd}`
 
-  return prompt;
+  return prompt
 }
 
 async function main() {
   const prompt = await buildSystemPrompt({
-    enabledTools: ["read_file", "list_files", "edit_file", "run_shell"],
+    enabledTools: ['read_file', 'list_files', 'edit_file', 'run_shell'],
     cwd: process.cwd(),
-    customInstructions: "回答时使用中文",
-  });
+    customInstructions: '回答时使用中文',
+  })
 
-  console.log("=== 生成的系统提示词 ===\n");
-  console.log(prompt);
+  console.log('=== 生成的系统提示词 ===\n')
+  console.log(prompt)
 }
 
-main();
+main()

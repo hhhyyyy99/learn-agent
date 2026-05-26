@@ -9,9 +9,16 @@
     "task:02": "pnpm --filter learn-agent-examples run task:02",
     "task:03": "pnpm --filter learn-agent-examples run task:03",
     "task:04": "pnpm --filter learn-agent-examples run task:04",
-    "task:05": "pnpm --filter learn-agent-examples run task:05"
+    "task:05": "pnpm --filter learn-agent-examples run task:05",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint --write .",
+    "lint:check": "biome lint .",
+    "check": "biome check --write .",
+    "check:ci": "biome ci ."
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
     "@types/node": "^22.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
