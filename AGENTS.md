@@ -5,6 +5,10 @@
 2. 回复开头必须叫”老大”
 3. 回复最后必须加一个emoji表情
 
+# Commit 规范
+- 不要在 commit message 中添加 `Co-Authored-By: Claude` 之类的签名
+- 保持 message 简洁，描述变更的 what 和 why
+
 # 注释规范
 
 ## 原则
