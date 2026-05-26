@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.97.1",
+    "@learn-agent/core": "workspace:*",
     "@learn-agent/provider": "workspace:*",
     "openai": "^4.0.0"
   },

@@ -1,11 +1,7 @@
 import { LLM } from '@learn-agent/provider'
 
-// ============================================================
-// 基础 LLM 调用：一次配置，不再区分 provider
-// ============================================================
 async function main() {
   try {
-    // 直接使用默认 provider + model（由 providers.yaml 的 default 字段决定）
     const llm = new LLM()
     const result = await llm.chat({
       messages: [
@@ -14,7 +10,6 @@ async function main() {
       ],
     })
 
-    console.log(result)
     console.log(`\n模型: ${llm.model}`)
     console.log(`内容: ${result.content}`)
 

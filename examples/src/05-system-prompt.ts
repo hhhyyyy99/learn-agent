@@ -4,30 +4,30 @@ import path from 'node:path'
 const toolGuides: Record<string, string> = {
   read_file: `
 ## read_file
-读取文件内容。使用前先用 list_files 确认文件存在。
+读取文件内容。使用前先用 run_shell ls 确认文件存在。
 - path 可以是相对路径或绝对路径
 - 大文件会返回全部内容，注意控制调用频率`,
 
-  list_files: `
-## list_files
-列出目录下的文件和子目录。
-- 返回 [目录] 或 [文件] 前缀
-- 不支持递归，需要手动进入子目录`,
-
   edit_file: `
 ## edit_file
-精确编辑文件。规则：
+通过查找替换精确编辑文件。规则：
 1. **必须先用 read_file 读取文件**，确认当前内容
-2. oldfileContent 必须**精确匹配**文件中的文字（包括空格和换行）
+2. oldContent 必须**精确匹配**文件中的文字（包括空格和换行）
 3. 一次只改一处，如果要改多处，分多次调用
-4. 如果 oldfileContent 找不到，说明文件内容和你想的不一样，重新读取`,
+4. 如果 oldContent 找不到，说明文件内容和你想的不一样，重新读取`,
+
+  delete_file: `
+## delete_file
+删除文件。
+- 删除前确认文件确实不需要了
+- 已删除的文件无法恢复`,
 
   run_shell: `
 ## run_shell
 执行 shell 命令。
 - 适合：安装依赖、运行测试、查看 git 状态、编译代码
-- 有 10 秒超时，长任务会失败
-- 先用 ls/pwd 确认目录，再执行危险操作`,
+- 有 30 秒超时，长任务会失败
+- 先用 pwd/ls 确认目录，再执行危险操作`,
 }
 
 async function loadProjectContext(cwd: string): Promise<string> {
@@ -86,7 +86,7 @@ async function buildSystemPrompt(options: BuildPromptOptions): Promise<string> {
 
 async function main() {
   const prompt = await buildSystemPrompt({
-    enabledTools: ['read_file', 'list_files', 'edit_file', 'run_shell'],
+    enabledTools: ['read_file', 'edit_file', 'delete_file', 'run_shell'],
     cwd: process.cwd(),
     customInstructions: '回答时使用中文',
   })
